@@ -50,6 +50,7 @@ main {
 
 .agent-details {
     text-align: center;
+    flex: 1;
 }
 
 .agent-details img {
@@ -67,9 +68,15 @@ main {
     margin: 5px 0;
 }
 
+.buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
 .agent-details button {
     padding: 10px 20px;
-    margin-top: 10px;
     border: none;
     background-color: #333;
     color: white;
@@ -80,14 +87,12 @@ main {
     background-color: #555;
 }
 
-.appointment-schedule {
-    max-width: 600px;
-}
-
-.calendar {
-    border: 1px solid #ccc;
+.availability {
+    flex: 1;
     padding: 20px;
+    border: 1px solid #ccc;
     background-color: white;
+    margin-left: 20px;
 }
 
 /* Footer Styles */
@@ -108,3 +113,4 @@ footer .map iframe {
     height: 200px;
     border: none;
 }
+
