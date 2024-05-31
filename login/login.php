@@ -4,8 +4,8 @@
     header("location: users.php");
   }
 ?>
-
 <?php include_once "header.php"; ?>
+<?php include 'navbar.php'; ?>
 <body>
   <div class="wrapper">
     <section class="form login">
@@ -31,6 +31,5 @@
   
   <script src="javascript/pass-show-hide.js"></script>
   <script src="javascript/login.js"></script>
-
 </body>
 </html>
