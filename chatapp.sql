@@ -27,12 +27,15 @@ SET time_zone = "+00:00";
 -- Table structure for table `messages`
 --
 
-CREATE TABLE `messages` (
-  `msg_id` int(11) NOT NULL,
+CREATE TABLE `emails` (
+  `email_id` int(11) NOT NULL AUTO_INCREMENT,
   `incoming_msg_id` int(255) NOT NULL,
   `outgoing_msg_id` int(255) NOT NULL,
-  `msg` varchar(1000) NOT NULL
+  `subject` varchar(255) NOT NULL,
+  `msg` text NOT NULL,
+  PRIMARY KEY (`email_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 -- --------------------------------------------------------
 
@@ -55,10 +58,10 @@ CREATE TABLE `users` (
 --
 
 --
--- Indexes for table `messages`
+-- Indexes for table `emails`
 --
-ALTER TABLE `messages`
-  ADD PRIMARY KEY (`msg_id`);
+ALTER TABLE `emails`
+  ADD PRIMARY KEY (`email_id`);
 
 --
 -- Indexes for table `users`
@@ -69,12 +72,6 @@ ALTER TABLE `users`
 --
 -- AUTO_INCREMENT for dumped tables
 --
-
---
--- AUTO_INCREMENT for table `messages`
---
-ALTER TABLE `messages`
-  MODIFY `msg_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`

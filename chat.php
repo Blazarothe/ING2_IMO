@@ -8,7 +8,7 @@
 <?php include_once "header.php"; ?>
 <body>
   <div class="wrapper">
-    <section class="chat-area">
+    <section class="mail-area">
       <header>
         <?php 
           $user_id = mysqli_real_escape_string($conn, $_GET['user_id']);
@@ -25,18 +25,18 @@
           <p><?php echo $row['status']; ?></p>
         </div>
       </header>
-      <div class="chat-box">
-
+      <div class="mail-box">
+        <!-- Les emails seront affichés ici -->
       </div>
-      <form action="#" class="typing-area">
-        <input type="text" class="incoming_id" name="incoming_id" value="<?php echo $user_id; ?>" hidden>
-        <input type="text" name="message" class="input-field" placeholder="Type a message here..." autocomplete="off">
-        <button><i class="fab fa-telegram-plane"></i></button>
+      <form action="#" class="compose-area">
+        <input type="text" class="recipient" name="recipient" placeholder="Recipient" required>
+        <input type="text" class="subject" name="subject" placeholder="Subject" required>
+        <textarea name="message" class="input-field" placeholder="Type your message here..." rows="10" required></textarea>
+        <button><i class="fab fa-telegram-plane"></i> Send</button>
       </form>
     </section>
   </div>
 
-  <script src="javascript/chat.js"></script>
-
+  <script src="javascript/mail.js"></script>
 </body>
 </html>
