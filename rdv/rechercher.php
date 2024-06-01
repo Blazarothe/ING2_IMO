@@ -1,11 +1,8 @@
 <?php
-// Connexion à la base de données
-$servername = "localhost";
-$username = "root";
-$password = "Alex2201"; // Remplacez par votre mot de passe
-$dbname = "OmnesImmobilier";
+session_start();
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+// Connexion à la base de données
+include_once "config.php";
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -14,12 +11,13 @@ if ($conn->connect_error) {
 // Initialisation des variables
 $searchQuery = "";
 $properties = [];
+$agents = [];
 
 // Vérifier si une recherche a été effectuée
 if (isset($_GET['search_query'])) {
     $searchQuery = $_GET['search_query'];
 
-    // Construire la requête SQL pour rechercher par ID ou ville
+    // Construire la requête SQL pour rechercher par ID ou ville dans les propriétés
     $sql = "SELECT * FROM Proprietes WHERE propriete_id LIKE ? OR ville LIKE ?";
     $stmt = $conn->prepare($sql);
     $likeQuery = "%" . $searchQuery . "%";
@@ -29,8 +27,25 @@ if (isset($_GET['search_query'])) {
 
     // Stocker les résultats dans un tableau
     if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
+        while ($row = $result->fetch_assoc()) {
             $properties[] = $row;
+        }
+    }
+
+    // Construire la requête SQL pour rechercher par nom d'agent
+    $sql = "SELECT a.id, u.nom, u.prenom, u.email, a.telephone 
+            FROM Agents a 
+            JOIN Utilisateurs u ON a.utilisateur_id = u.id 
+            WHERE u.nom LIKE ? OR u.prenom LIKE ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ss", $likeQuery, $likeQuery);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Stocker les résultats dans un tableau
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $agents[] = $row;
         }
     }
 }
@@ -93,12 +108,12 @@ $conn->close();
             border: none;
             cursor: pointer;
         }
-        .properties {
+        .results {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-around;
         }
-        .property {
+        .property, .agent {
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 5px;
@@ -112,11 +127,11 @@ $conn->close();
             height: auto;
             border-radius: 5px;
         }
-        .property h3 {
+        .property h3, .agent h3 {
             color: #333;
             font-size: 1.5em;
         }
-        .property p {
+        .property p, .agent p {
             color: #666;
         }
         footer {
@@ -140,20 +155,20 @@ $conn->close();
                 <li><a href="rechercher.php">Recherche</a></li>
                 <li><a href="rendez_vous.php">Rendez-vous</a></li>
                 <li><a href="compte.php">Votre Compte</a></li>
-                <li><a href="chat.php">Chat</a></li>
+                <li><a href="../login/login.php">Chat</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
-        <h2>Recherche de Biens Immobiliers</h2>
+        <h2>Recherche de Biens Immobiliers et d'Agents</h2>
         <div class="search-form">
             <form method="GET" action="rechercher.php">
-                <input type="text" name="search_query" placeholder="Entrez un ID ou une ville" value="<?= htmlspecialchars($searchQuery) ?>">
+                <input type="text" name="search_query" placeholder="Entrez un ID, une ville ou un nom d'agent" value="<?= htmlspecialchars($searchQuery) ?>">
                 <button type="submit">Rechercher</button>
             </form>
         </div>
-        <div class="properties">
+        <div class="results">
             <?php if (count($properties) > 0): ?>
                 <?php foreach ($properties as $property): ?>
                     <div class="property">
@@ -168,7 +183,19 @@ $conn->close();
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <p>Aucun bien immobilier trouvé.</p>
+                <p>Aucune propriété trouvée.</p>
+            <?php endif; ?>
+
+            <?php if (count($agents) > 0): ?>
+                <?php foreach ($agents as $agent): ?>
+                    <div class="agent">
+                        <h3>Agent: <?= htmlspecialchars($agent['prenom'] . ' ' . $agent['nom']) ?></h3>
+                        <p>Email: <?= htmlspecialchars($agent['email']) ?></p>
+                        <p>Téléphone: <?= htmlspecialchars($agent['telephone']) ?></p>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>Aucun agent trouvé.</p>
             <?php endif; ?>
         </div>
     </main>

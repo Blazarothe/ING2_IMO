@@ -1,13 +1,7 @@
 <?php
 session_start();
 
-// Connexion à la base de données
-$servername = "localhost";
-$username = "root";
-$password = "Alex2201"; // Remplacez par votre mot de passe
-$dbname = "OmnesImmobilier";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
+include_once "config.php";
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -20,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $mot_de_passe = $_POST['mot_de_passe'];
 
-    $sql = "SELECT user_id, password, type_utilisateur FROM users WHERE email = ?";
+    $sql = "SELECT id, mot_de_passe, type_utilisateur FROM Utilisateurs WHERE email = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $email);
     $stmt->execute();
@@ -28,8 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
-        if ($mot_de_passe === $user['password']) {
-            $_SESSION['user_id'] = $user['user_id'];
+        if ($mot_de_passe === $user['mot_de_passe']) {
+            $_SESSION['user_id'] = $user['id'];
             $_SESSION['type_utilisateur'] = $user['type_utilisateur'];
             header("Location: compte.php");
             exit();
@@ -109,17 +103,6 @@ $conn->close();
             border: none;
             cursor: pointer;
             width: 100%;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
-        .login-form .signup-btn {
-            display: block;
-            padding: 10px 20px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 5px;
         }
         .error {
             color: red;
@@ -146,7 +129,7 @@ $conn->close();
                 <li><a href="rechercher.php">Recherche</a></li>
                 <li><a href="rendez_vous.php">Rendez-vous</a></li>
                 <li><a href="compte.php">Votre Compte</a></li>
-                <li><a href="chat.php">Chat</a></li>
+                <li><a href="../login/login.php">Chat</a></li>
             </ul>
         </nav>
     </header>
@@ -166,7 +149,8 @@ $conn->close();
 
                 <button type="submit">Se connecter</button>
             </form>
-            <a class="signup-btn" href="../login/login.php">Créer un compte</a>
+            <br>
+            <button onclick="location.href='../login/index.php'">Créer un compte</button>
         </div>
     </main>
 

@@ -2,12 +2,7 @@
 session_start();
 
 // Connexion à la base de données
-$servername = "localhost";
-$username = "root";
-$password = "Alex2201"; // Remplacez par votre mot de passe
-$dbname = "OmnesImmobilier";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
+include_once "config.php";
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -32,9 +27,24 @@ if (isset($_POST['cancel_rdv_id'])) {
 }
 
 // Récupérer les rendez-vous confirmés pour l'utilisateur ou l'agent
-$rdvSql = ($typeUtilisateur == 'client') ? 
-    "SELECT rv.id AS rdv_id, rv.date_heure, p.adresse, u.lname AS agent_nom, u.fname AS agent_prenom, a.telephone, p.digicode FROM RendezVous rv JOIN Proprietes p ON rv.propriete_id = p.propriete_id JOIN users u ON rv.agent_id = u.user_id JOIN Agents a ON rv.agent_id = a.id WHERE rv.client_id = ? AND rv.statut = 'confirmé'" :
-    "SELECT rv.id AS rdv_id, rv.date_heure, p.adresse, u.lname AS client_nom, u.fname AS client_prenom, u.email, p.digicode FROM RendezVous rv JOIN Proprietes p ON rv.propriete_id = p.propriete_id JOIN users u ON rv.client_id = u.user_id WHERE rv.agent_id = ? AND rv.statut = 'confirmé'";
+$rdvSql = "";
+if ($typeUtilisateur == 'client') {
+    $rdvSql = "SELECT rv.id as rdv_id, rv.date_heure, p.adresse, p.digicode, ua.nom AS agent_nom, ua.prenom AS agent_prenom, a.telephone AS agent_telephone, uc.nom AS client_nom, uc.prenom AS client_prenom, uc.email AS client_email 
+               FROM RendezVous rv 
+               JOIN Proprietes p ON rv.propriete_id = p.propriete_id 
+               JOIN Agents a ON rv.agent_id = a.id
+               JOIN Utilisateurs ua ON a.utilisateur_id = ua.id
+               JOIN Utilisateurs uc ON rv.client_id = uc.id
+               WHERE rv.client_id = ? AND rv.statut = 'confirmé'";
+} else if ($typeUtilisateur == 'agent') {
+    $rdvSql = "SELECT rv.id as rdv_id, rv.date_heure, p.adresse, p.digicode, ua.nom AS agent_nom, ua.prenom AS agent_prenom, a.telephone AS agent_telephone, uc.nom AS client_nom, uc.prenom AS client_prenom, uc.email AS client_email 
+               FROM RendezVous rv 
+               JOIN Proprietes p ON rv.propriete_id = p.propriete_id 
+               JOIN Agents a ON rv.agent_id = a.id
+               JOIN Utilisateurs ua ON a.utilisateur_id = ua.id
+               JOIN Utilisateurs uc ON rv.client_id = uc.id
+               WHERE a.utilisateur_id = ? AND rv.statut = 'confirmé'";
+}
 
 $stmt = $conn->prepare($rdvSql);
 $stmt->bind_param("i", $userId);
@@ -135,7 +145,7 @@ $conn->close();
                 <li><a href="rechercher.php">Recherche</a></li>
                 <li><a href="rendez_vous.php">Rendez-vous</a></li>
                 <li><a href="compte.php">Votre Compte</a></li>
-                <li><a href="chat.php">Chat</a></li>
+                <li><a href="../login/login.php">Chat</a></li>
             </ul>
         </nav>
     </header>
@@ -143,14 +153,14 @@ $conn->close();
     <main>
         <h2>Vos Rendez-vous Confirmés</h2>
         <div class="rendezvous">
-            <?php if ($rdvResult->num_rows > 0): ?>
+            <?php if ($rdvResult && $rdvResult->num_rows > 0): ?>
                 <?php while ($rdv = $rdvResult->fetch_assoc()): ?>
                     <div class="rendezvous-item">
                         <h3>Rendez-vous avec <?= htmlspecialchars($typeUtilisateur == 'client' ? $rdv['agent_prenom'] . ' ' . $rdv['agent_nom'] : $rdv['client_prenom'] . ' ' . $rdv['client_nom']) ?></h3>
                         <p>Date et heure : <?= htmlspecialchars($rdv['date_heure']) ?></p>
                         <p>Adresse : <?= htmlspecialchars($rdv['adresse']) ?></p>
-                        <p>Digicode : <?= htmlspecialchars($rdv['digicode'] ?? '') ?></p>
-                        <p>Téléphone : <?= htmlspecialchars($typeUtilisateur == 'client' ? $rdv['telephone'] ?? '' : $rdv['email'] ?? '') ?></p>
+                        <p>Digicode : <?= htmlspecialchars($rdv['digicode']) ?></p>
+                        <p><?= $typeUtilisateur == 'client' ? 'Téléphone : ' . htmlspecialchars($rdv['agent_telephone']) : 'Mail : ' . htmlspecialchars($rdv['client_email']) ?></p>
                         <form method="post" action="rendez_vous.php">
                             <input type="hidden" name="cancel_rdv_id" value="<?= htmlspecialchars($rdv['rdv_id']) ?>">
                             <button type="submit">Annuler le RDV</button>
@@ -168,4 +178,5 @@ $conn->close();
     </footer>
 </body>
 </html>
+
 

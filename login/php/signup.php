@@ -36,4 +36,30 @@
     }else{
         echo "All input fields are required!";
     }
+
+$servername2 = "localhost";
+$username2 = "root"; // Replace with your database username
+$password2 = ""; // Replace with your database password
+$dbname2 = "OmnesImmobilier";
+
+// Create connection
+$conn2 = new mysqli($servername2, $username2, $password2, $dbname2);
+
+// Check connection
+if ($conn2->connect_error) {
+    die("Connection failed: " . $conn2->connect_error);
+}
+
+// Retrieve form data
+$nom = $_POST['lname'];
+$prenom = $_POST['fname'];
+$email = $_POST['email'];
+$mot_de_passe = $_POST['password']; // Hash the password for security
+$type_utilisateur = 'client'; // Fixed user type
+
+// Prepare and bind
+$stmt = $conn2->prepare("INSERT INTO Utilisateurs (nom, prenom, email, mot_de_passe, type_utilisateur) VALUES (?, ?, ?, ?, ?)");
+$stmt->bind_param("sssss", $nom, $prenom, $email, $mot_de_passe, $type_utilisateur);
+$stmt->execute()
+
 ?>
