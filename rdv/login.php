@@ -129,7 +129,7 @@ $conn->close();
                 <li><a href="rechercher.php">Recherche</a></li>
                 <li><a href="rendez_vous.php">Rendez-vous</a></li>
                 <li><a href="compte.php">Votre Compte</a></li>
-                <li><a href="../login/login.php">Chat</a></li>
+                <li><a href="chat.php">Chat</a></li>
             </ul>
         </nav>
     </header>
@@ -150,7 +150,7 @@ $conn->close();
                 <button type="submit">Se connecter</button>
             </form>
             <br>
-            <button onclick="location.href='../login/index.php'">Créer un compte</button>
+            <button onclick="location.href='../login/ChatApp/index.php'">Créer un compte</button>
         </div>
     </main>
 

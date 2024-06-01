@@ -1,5 +1,4 @@
 <?php
-// Connexion à la base de données
 include_once "config.php";
 
 if ($conn->connect_error) {
@@ -27,6 +26,7 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tout Parcourir - Omnes Immobilier</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -38,11 +38,18 @@ $conn->close();
             background-color: #333;
             color: #fff;
             padding: 10px 0;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo img {
+            width: 150px;
+            margin-left: 20px;
         }
         nav ul {
             list-style: none;
             padding: 0;
+            margin-right: 20px;
         }
         nav ul li {
             display: inline;
@@ -72,6 +79,9 @@ $conn->close();
             padding: 15px;
             width: 300px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .property img {
             max-width: 100%;
@@ -81,24 +91,47 @@ $conn->close();
         .property h3 {
             color: #333;
             font-size: 1.5em;
+            margin-bottom: 10px;
+            text-align: center;
         }
         .property p {
             color: #666;
+            margin: 5px 0;
+            text-align: center;
+        }
+        .property .btn {
+            padding: 10px 15px;
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .property .btn:hover {
+            background-color: #555;
         }
         footer {
             background-color: #333;
             color: #fff;
             text-align: center;
-            padding: 10px 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+            padding: 20px 0;
+        }
+        .contact-info {
+            margin-bottom: 10px;
+        }
+        .map {
+            margin: 0 auto;
+            width: 80%;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Omnes Immobilier</h1>
+        <div class="logo">
+            <img src="logoomnes.webp" alt="Omnes Immobilier Logo">
+        </div>
         <nav>
             <ul>
                 <li><a href="index.php">Accueil</a></li>
@@ -106,7 +139,7 @@ $conn->close();
                 <li><a href="rechercher.php">Recherche</a></li>
                 <li><a href="rendez_vous.php">Rendez-vous</a></li>
                 <li><a href="compte.php">Votre Compte</a></li>
-                <li><a href="../login/login.php">Chat</a></li>
+                <li><a href="chat.php">Chat</a></li>
             </ul>
         </nav>
     </header>
@@ -125,6 +158,7 @@ $conn->close();
                         <p>Dimensions: <?= htmlspecialchars($property['dimension']) ?></p>
                         <p>Prix: <?= number_format($property['prix'], 2) ?> €</p>
                         <p>Agent ID: <?= htmlspecialchars($property['agent_id']) ?></p>
+                        <a href="agent_profile.php?agent_id=<?= htmlspecialchars($property['agent_id']) ?>" class="btn">Voir le profil de l'agent</a>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
@@ -134,7 +168,14 @@ $conn->close();
     </main>
 
     <footer>
-        <p>&copy; 2024 Omnes Immobilier. Tous droits réservés.</p>
+        <div class="contact-info">
+            <p>Email: contact@omnesimmobilier.fr</p>
+            <p>Téléphone: +33 01 23 45 67 89</p>
+            <p>Adresse: 10 Rue Sextius Michel, Paris, France</p>
+        </div>
+        <div class="map">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2624.6826763800837!2d2.2854042156743957!3d48.849381479287074!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e671c1a50ba2fb%3A0x61c73ae7a32aaec5!2s10%20Rue%20Sextius%20Michel%2C%2075005%20Paris%2C%20France!5e0!3m2!1en!2us!4v1622209168380!5m2!1en!2us" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
     </footer>
 </body>
 </html>

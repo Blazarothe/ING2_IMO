@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cv = $_POST['cv'];
     $disponibilite = $_POST['disponibilite'];
 
-    // Vérifier si l'email existe déjà
+    // Vérifier si l'email existe déjà dans la première base de données
     $sql = "SELECT id FROM Utilisateurs WHERE email = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $email);
@@ -45,9 +45,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("isss", $utilisateur_id, $telephone, $cv, $disponibilite);
             if ($stmt->execute()) {
-                $_SESSION['message'] = "Agent ajouté avec succès.";
-                header("Location: compte.php");
-                exit();
+                // Deuxième connexion à la base de données
+                $dbname2 = "reseau";
+                $conn2 = mysqli_connect($hostname, $username, $password, $dbname2);
+
+                if (!$conn2) {
+                    $_SESSION['error'] = "Erreur de connexion à la deuxième base de données.";
+                    header("Location: ajouter_agent.php");
+                    exit();
+                }
+
+                $fname = mysqli_real_escape_string($conn2, $_POST['prenom']);
+                $lname = mysqli_real_escape_string($conn2, $_POST['nom']);
+                $email2 = mysqli_real_escape_string($conn2, $_POST['email']);
+                $password2 = mysqli_real_escape_string($conn2, $_POST['mot_de_passe']);
+
+                if (!empty($fname) && !empty($lname) && !empty($email2) && !empty($password2)) {
+                    if (filter_var($email2, FILTER_VALIDATE_EMAIL)) {
+                        $sql2 = mysqli_query($conn2, "SELECT * FROM users WHERE email = '{$email2}'");
+                        if (mysqli_num_rows($sql2) > 0) {
+                            $_SESSION['error'] = "$email2 - This email already exists!";
+                            header("Location: ajouter_agent.php");
+                            exit();
+                        } else {
+                            $ran_id = rand(time(), 100000000);
+                            $status = "Active now";
+                            $role = '2';
+                            $encrypt_pass = md5($password2);
+                            $insert_query = mysqli_query($conn2, "INSERT INTO users (unique_id, fname, lname, email, password, status, role) VALUES ({$ran_id}, '{$fname}', '{$lname}', '{$email2}', '{$encrypt_pass}', '{$status}', '{$role}')");
+                            if ($insert_query) {
+                                $_SESSION['message'] = "Agent ajouté avec succès.";
+                                header("Location: compte.php");
+                                exit();
+                            } else {
+                                $_SESSION['error'] = "Erreur lors de l'ajout de l'utilisateur dans la deuxième base de données.";
+                                header("Location: ajouter_agent.php");
+                                exit();
+                            }
+                        }
+                    } else {
+                        $_SESSION['error'] = "$email2 is not a valid email!";
+                        header("Location: ajouter_agent.php");
+                        exit();
+                    }
+                } else {
+                    $_SESSION['error'] = "All input fields are required!";
+                    header("Location: ajouter_agent.php");
+                    exit();
+                }
             } else {
                 $_SESSION['error'] = "Erreur lors de l'ajout de l'agent.";
                 header("Location: ajouter_agent.php");
@@ -65,4 +110,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $conn->close();
 ?>
-

@@ -77,12 +77,11 @@ unset($_SESSION['error']);
         </div>
         <nav>
             <ul>
-                <li><a href="accueil_admin.php">Accueil Admin</a></li>
+                <li><a href="index.php">Accueil</a></li>
                 <li><a href="ajouter_propriete.php">Ajouter une Propriété</a></li>
                 <li><a href="ajouter_agent.php">Ajouter un Agent</a></li>
-                <li><a href="gerer_disponibilite.php">Gérer la Disponibilité des Agents</a></li>
                 <li><a href="logout.php">Déconnexion</a></li>
-                <li><a href="../login/login.php">Chat</a></li>
+                <li><a href="chat.php">Chat</a></li>
             </ul>
         </nav>
     </header>
