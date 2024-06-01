@@ -1,0 +1,81 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+header .logo img {
+    width: 150px;
+    margin-left: 20px;
+}
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin-right: 20px;
+}
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+main {
+    padding: 20px;
+}
+h2 {
+    text-align: center;
+    color: #333;
+}
+.carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+}
+.carousel::-webkit-scrollbar {
+    display: none;
+}
+.property {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 15px;
+    width: 300px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.property img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+.property h3 {
+    color: #333;
+    font-size: 1.5em;
+}
+.property p {
+    color: #666;
+}
+.event-of-the-week {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 15px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+}
