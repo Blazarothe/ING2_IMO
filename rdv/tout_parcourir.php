@@ -1,9 +1,26 @@
 <?php
-include_once "config.php";
+session_start();
+
+// Connexion à la base de données
+$servername = "localhost";
+$username = "root";
+$password = ""; // Remplacez par votre mot de passe
+$dbname = "OmnesImmobilier";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+
+// Vérifier si l'utilisateur est connecté
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$userId = $_SESSION['user_id'];
+$typeUtilisateur = $_SESSION['type_utilisateur'] ?? '';
 
 // Initialiser le type de propriété
 $typePropriete = isset($_GET['type_propriete']) ? $_GET['type_propriete'] : '';
@@ -128,6 +145,13 @@ $conn->close();
         .property .btn:hover {
             background-color: #555;
         }
+        .property .btn-delete {
+            background-color: red;
+            margin-top: 5px;
+        }
+        .property .btn-delete:hover {
+            background-color: darkred;
+        }
         footer {
             background-color: #333;
             color: #fff;
@@ -189,6 +213,12 @@ $conn->close();
                         <p>Agent ID: <?= htmlspecialchars($property['agent_id']) ?></p>
                         <a href="agent_profile.php?agent_id=<?= htmlspecialchars($property['agent_id']) ?>" class="btn">Voir le profil de l'agent</a>
                         <a href="paiement.php?propriete_id=<?= htmlspecialchars($property['propriete_id']) ?>&prix=<?= htmlspecialchars($property['prix']) ?>" class="btn">Acheter</a>
+                        <?php if ($typeUtilisateur === 'administrateur'): ?>
+                            <form method="post" action="supprimer_propriete.php" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette propriété ?');">
+                                <input type="hidden" name="propriete_id" value="<?= htmlspecialchars($property['propriete_id']) ?>">
+                                <button type="submit" class="btn btn-delete">Supprimer</button>
+                            </form>
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
@@ -209,5 +239,3 @@ $conn->close();
     </footer>
 </body>
 </html>
-
-
