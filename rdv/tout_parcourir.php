@@ -5,26 +5,14 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Initialiser le type de propriété
-$typePropriete = isset($_GET['type_propriete']) ? $_GET['type_propriete'] : '';
-
-// Construire la requête SQL avec le filtre de type de propriété
+// Récupérer tous les biens immobiliers
 $sql = "SELECT * FROM Proprietes";
-if ($typePropriete) {
-    $sql .= " WHERE type_propriete = ?";
-}
-
-$stmt = $conn->prepare($sql);
-if ($typePropriete) {
-    $stmt->bind_param("s", $typePropriete);
-}
-$stmt->execute();
-$result = $stmt->get_result();
+$result = $conn->query($sql);
 
 // Stocker les résultats dans un tableau
 $properties = [];
 if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
+    while($row = $result->fetch_assoc()) {
         $properties[] = $row;
     }
 }
@@ -77,10 +65,6 @@ $conn->close();
         h2 {
             text-align: center;
             color: #333;
-        }
-        .filter-form {
-            text-align: center;
-            margin-bottom: 20px;
         }
         .properties {
             display: flex;
@@ -162,19 +146,6 @@ $conn->close();
 
     <main>
         <h2>Liste des Biens Immobiliers</h2>
-        <div class="filter-form">
-            <form method="get" action="tout_parcourir.php">
-                <label for="type_propriete">Filtrer par type de bien :</label>
-                <select id="type_propriete" name="type_propriete">
-                    <option value="">Tous</option>
-                    <option value="résidentiel" <?= $typePropriete == 'résidentiel' ? 'selected' : '' ?>>Résidentiel</option>
-                    <option value="commercial" <?= $typePropriete == 'commercial' ? 'selected' : '' ?>>Commercial</option>
-                    <option value="terrain" <?= $typePropriete == 'terrain' ? 'selected' : '' ?>>Terrain</option>
-                    <option value="appartement" <?= $typePropriete == 'appartement' ? 'selected' : '' ?>>Appartement</option>
-                </select>
-                <button type="submit">Filtrer</button>
-            </form>
-        </div>
         <div class="properties">
             <?php if (count($properties) > 0): ?>
                 <?php foreach ($properties as $property): ?>
@@ -188,7 +159,6 @@ $conn->close();
                         <p>Prix: <?= number_format($property['prix'], 2) ?> €</p>
                         <p>Agent ID: <?= htmlspecialchars($property['agent_id']) ?></p>
                         <a href="agent_profile.php?agent_id=<?= htmlspecialchars($property['agent_id']) ?>" class="btn">Voir le profil de l'agent</a>
-                        <a href="paiement.php?propriete_id=<?= htmlspecialchars($property['propriete_id']) ?>&prix=<?= htmlspecialchars($property['prix']) ?>" class="btn">Acheter</a>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
@@ -209,5 +179,3 @@ $conn->close();
     </footer>
 </body>
 </html>
-
-

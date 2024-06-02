@@ -42,11 +42,6 @@ $conn->close();
         .slick-prev, .slick-next {
             color: #333;
         }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
     </style>
 </head>
 <body>
@@ -67,10 +62,6 @@ $conn->close();
     </header>
 
     <main>
-        <h1>Omnes Immobilier</h1>
-        <div class="event-of-the-week">
-            <p>Bienvenue chez Omnes Immobilier, votre agence immobilière de confiance à Paris. Nous offrons des services de qualité pour l'achat, la vente, la location et la gestion locative de biens immobiliers. Notre équipe expérimentée s'engage à fournir des conseils personnalisés et transparents à chaque étape de votre projet. Que vous recherchiez la maison de vos rêves, souhaitiez vendre votre propriété au meilleur prix, ou nécessitiez une gestion locative fiable, Omnes Immobilier est là pour vous accompagner.</p>
-        </div>
         <h2>Événement de la semaine</h2>
         <div class="event-of-the-week">
             <h3>Ouverture de notre nouvelle agence à Paris</h3>
