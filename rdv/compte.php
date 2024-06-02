@@ -51,31 +51,43 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
+// Récupérer le numéro de téléphone de l'agent si l'utilisateur est un agent
+$telephone = '';
+if ($typeUtilisateur === 'agent') {
+    $agentSql = "SELECT telephone FROM Agents WHERE utilisateur_id=?";
+    $stmt = $conn->prepare($agentSql);
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $agent = $result->fetch_assoc();
+    $telephone = $agent['telephone'];
+}
+
 // Récupérer les propriétés pour le formulaire de prise de rendez-vous (uniquement pour les clients)
 if ($typeUtilisateur === 'client') {
     $proprieteSql = "SELECT propriete_id, adresse FROM Proprietes";
     $proprieteResult = $conn->query($proprieteSql);
 
     // Récupérer les agents immobiliers
-    $agentSql = "SELECT a.id, u.nom, u.prenom FROM Agents a JOIN Utilisateurs u ON a.utilisateur_id = u.id";
+    $agentSql = "SELECT a.id, u.nom, u.prenom, a.telephone FROM Agents a JOIN Utilisateurs u ON a.utilisateur_id = u.id";
     $agentResult = $conn->query($agentSql);
 }
 
 // Récupérer les rendez-vous pour l'utilisateur ou l'agent
 $rdvSql = ($typeUtilisateur == 'client') ? 
-    "SELECT rv.date_heure, p.adresse, ua.nom AS agent_nom, ua.prenom AS agent_prenom, uc.nom AS client_nom, uc.prenom AS client_prenom 
+    "SELECT rv.date_heure, p.adresse, u.nom AS agent_nom, u.prenom AS agent_prenom, a.telephone AS agent_telephone, u2.nom AS client_nom, u2.prenom AS client_prenom 
      FROM RendezVous rv 
      JOIN Proprietes p ON rv.propriete_id = p.propriete_id 
      JOIN Agents a ON rv.agent_id = a.id
-     JOIN Utilisateurs ua ON a.utilisateur_id = ua.id
-     JOIN Utilisateurs uc ON rv.client_id = uc.id
+     JOIN Utilisateurs u ON a.utilisateur_id = u.id
+     JOIN Utilisateurs u2 ON rv.client_id = u2.id
      WHERE rv.client_id = ? AND rv.statut = 'confirmé'" :
-    "SELECT rv.date_heure, p.adresse, ua.nom AS agent_nom, ua.prenom AS agent_prenom, uc.nom AS client_nom, uc.prenom AS client_prenom 
+    "SELECT rv.date_heure, p.adresse, u.nom AS agent_nom, u.prenom AS agent_prenom, a.telephone AS agent_telephone, u2.nom AS client_nom, u2.prenom AS client_prenom 
      FROM RendezVous rv 
      JOIN Proprietes p ON rv.propriete_id = p.propriete_id 
      JOIN Agents a ON rv.agent_id = a.id
-     JOIN Utilisateurs ua ON a.utilisateur_id = ua.id
-     JOIN Utilisateurs uc ON rv.client_id = uc.id
+     JOIN Utilisateurs u ON a.utilisateur_id = u.id
+     JOIN Utilisateurs u2 ON rv.client_id = u2.id
      WHERE a.utilisateur_id = ? AND rv.statut = 'confirmé'";
 
 $stmt = $conn->prepare($rdvSql);
@@ -250,6 +262,11 @@ $conn->close();
                 <label for="mot_de_passe">Mot de passe :</label>
                 <input type="password" id="mot_de_passe" name="mot_de_passe" required>
 
+                <?php if ($typeUtilisateur === 'agent'): ?>
+                <label for="telephone">Téléphone :</label> <!-- Affichage du téléphone pour les agents -->
+                <input type="text" id="telephone" name="telephone" value="<?= htmlspecialchars($telephone) ?>" readonly>
+                <?php endif; ?>
+
                 <button type="submit">Mettre à jour</button>
             </form>
         </div>
@@ -290,6 +307,9 @@ $conn->close();
                             <h3>Rendez-vous avec <?= htmlspecialchars($typeUtilisateur == 'client' ? $rdv['agent_prenom'] . ' ' . $rdv['agent_nom'] : $rdv['client_prenom'] . ' ' . $rdv['client_nom']) ?></h3>
                             <p>Date et heure : <?= htmlspecialchars($rdv['date_heure']) ?></p>
                             <p>Adresse : <?= htmlspecialchars($rdv['adresse']) ?></p>
+                            <?php if ($typeUtilisateur === 'client'): ?>
+                                <p>Numéro de téléphone de l'agent : <?= htmlspecialchars($rdv['agent_telephone']) ?></p>
+                            <?php endif; ?>
                         </div>
                     <?php endwhile; ?>
                 <?php else: ?>
@@ -327,4 +347,3 @@ $conn->close();
     </footer>
 </body>
 </html>
-
