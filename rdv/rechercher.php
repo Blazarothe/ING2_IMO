@@ -11,6 +11,7 @@ if ($conn->connect_error) {
 $searchQuery = "";
 $properties = [];
 $agents = [];
+$agentProperties = []; // Tableau pour stocker les propriétés par agent
 
 // Vérifier si une recherche a été effectuée
 if (isset($_GET['search_query'])) {
@@ -45,6 +46,20 @@ if (isset($_GET['search_query'])) {
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             $agents[] = $row;
+
+            // Récupérer les propriétés associées à cet agent
+            $agentId = $row['id'];
+            $sqlProperties = "SELECT * FROM Proprietes WHERE agent_id = ?";
+            $stmtProperties = $conn->prepare($sqlProperties);
+            $stmtProperties->bind_param("i", $agentId);
+            $stmtProperties->execute();
+            $resultProperties = $stmtProperties->get_result();
+
+            if ($resultProperties->num_rows > 0) {
+                while ($property = $resultProperties->fetch_assoc()) {
+                    $agentProperties[$agentId][] = $property;
+                }
+            }
         }
     }
 }
@@ -211,6 +226,7 @@ $conn->close();
                         <p>Prix: <?= number_format($property['prix'], 2) ?> €</p>
                         <p>Agent ID: <?= htmlspecialchars($property['agent_id']) ?></p>
                         <a href="agent_profile.php?agent_id=<?= htmlspecialchars($property['agent_id']) ?>" class="btn">Voir le profil de l'agent</a>
+                        <a href="paiement.php?propriete_id=<?= htmlspecialchars($property['propriete_id']) ?>" class="btn">Acheter</a>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
@@ -224,6 +240,23 @@ $conn->close();
                         <p>Email: <?= htmlspecialchars($agent['email']) ?></p>
                         <p>Téléphone: <?= htmlspecialchars($agent['telephone']) ?></p>
                         <a href="agent_profile.php?agent_id=<?= htmlspecialchars($agent['id']) ?>" class="btn">Voir le profil de l'agent</a>
+                        <?php if (isset($agentProperties[$agent['id']])): ?>
+                            <div class="agent-properties">
+                                <h4>Propriétés de l'agent :</h4>
+                                <?php foreach ($agentProperties[$agent['id']] as $property): ?>
+                                    <div class="property">
+                                        <img src="<?= htmlspecialchars($property['photo_url']) ?>" alt="Photo de la propriété">
+                                        <h3><?= ucfirst(htmlspecialchars($property['type_propriete'])) ?> à <?= htmlspecialchars($property['ville']) ?></h3>
+                                        <p>ID: <?= htmlspecialchars($property['propriete_id']) ?></p>
+                                        <p>Adresse: <?= htmlspecialchars($property['adresse']) ?></p>
+                                        <p>Description: <?= htmlspecialchars($property['description']) ?></p>
+                                        <p>Dimensions: <?= htmlspecialchars($property['dimension']) ?></p>
+                                        <p>Prix: <?= number_format($property['prix'], 2) ?> €</p>
+                                        <a href="paiement.php?propriete_id=<?= htmlspecialchars($property['propriete_id']) ?>" class="btn">Acheter</a>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
@@ -244,5 +277,6 @@ $conn->close();
     </footer>
 </body>
 </html>
+
 
 
