@@ -188,7 +188,7 @@ $conn->close();
                         <p>Prix: <?= number_format($property['prix'], 2) ?> €</p>
                         <p>Agent ID: <?= htmlspecialchars($property['agent_id']) ?></p>
                         <a href="agent_profile.php?agent_id=<?= htmlspecialchars($property['agent_id']) ?>" class="btn">Voir le profil de l'agent</a>
-                        <a href="paiement.php?propriete_id=<?= htmlspecialchars($property['propriete_id']) ?>" class="btn">Acheter</a>
+                        <a href="paiement.php?propriete_id=<?= htmlspecialchars($property['propriete_id']) ?>&prix=<?= htmlspecialchars($property['prix']) ?>" class="btn">Acheter</a>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
