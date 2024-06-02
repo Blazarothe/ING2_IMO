@@ -66,7 +66,6 @@
         <a href="chatapp/login.php" class="button">Chat Online</a>
         <a href="https://teams.microsoft.com/l/meetup-join/19%3ameeting_OTJhZGQ5NzEtOTQ5MC00MmU5LWE1ZjYtNjBmNGViZjkwMzUx%40thread.v2/0?context=%7b%22Tid%22%3a%22a2697119-66c5-4126-9991-b0a8d15d367f%22%2c%22Oid%22%3a%22f789ff9d-88c1-4262-a387-926f1e4349c8%22%7d" class="button">Appel Audio</a>
         <a href="https://teams.microsoft.com/l/meetup-join/19%3ameeting_OTJhZGQ5NzEtOTQ5MC00MmU5LWE1ZjYtNjBmNGViZjkwMzUx%40thread.v2/0?context=%7b%22Tid%22%3a%22a2697119-66c5-4126-9991-b0a8d15d367f%22%2c%22Oid%22%3a%22f789ff9d-88c1-4262-a387-926f1e4349c8%22%7d" class="button">Appel Vidéo</a>
-        <a href="message-serveur.php" class="button">Test Message Automatique<a>
     </div>
 </body>
 </html>

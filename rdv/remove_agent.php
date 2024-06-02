@@ -29,16 +29,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt2 = $conn->prepare($sql2);
     $stmt2->bind_param("s", $agent_email);
 
-    // Remove agent from the second database (users table)
+    // Remove user from the users table in the second database
     $sql3 = "DELETE FROM users WHERE email = ?";
     $stmt3 = $second_conn->prepare($sql3);
     $stmt3->bind_param("s", $agent_email);
 
-    if ($stmt1->execute() && $stmt2->execute()) {
+    if ($stmt1->execute() && $stmt2->execute() && $stmt3->execute()) {
         header("Location: agent_list.php");
         exit();
     } else {
-        echo "Error removing agent: " . $conn->error . " / " . $second_conn->error;
+        echo "erreur retrait agent " . $conn->error . " / " . $second_conn->error;
     }
 
     $stmt1->close();

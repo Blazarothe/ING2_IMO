@@ -5,7 +5,7 @@ session_start();
 include_once "config.php";
 
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    die("Problème connection " . $conn->connect_error);
 }
 
 // Vérifier si l'utilisateur est connecté
