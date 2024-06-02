@@ -24,7 +24,7 @@ $agentId = $_GET['agent_id'];
 $agent = null;
 
 // Récupérer les informations de l'agent et ses disponibilités
-$sql = "SELECT a.id, u.nom, u.prenom, a.disponibilite, a.photo_profil_url, a.cv 
+$sql = "SELECT a.id, u.nom, u.prenom, a.disponibilite, a.photo_profil_url 
         FROM Agents a 
         JOIN Utilisateurs u ON a.utilisateur_id = u.id
         WHERE a.id = ?";
@@ -148,9 +148,6 @@ $conn->close();
                     </form>
                     <form action="chat.php" method="GET">
                         <button type="submit" name="agent_id" value="<?= htmlspecialchars($agent['id']) ?>">Communiquer</button>
-                    </form>
-                    <form action="<?= htmlspecialchars($agent['cv']) ?>" method="GET" target="_blank">
-                        <button type="submit">Voir le CV</button>
                     </form>
                 </div>
             </div>

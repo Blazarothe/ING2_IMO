@@ -111,8 +111,11 @@ unset($_SESSION['error']);
                 <label for="telephone">Téléphone :</label>
                 <input type="text" id="telephone" name="telephone" required>
                 
-                <label for="cv">CV :</label>
-                <textarea id="cv" name="cv" rows="4" required></textarea>
+                <label for="cv_url">URL du CV (PDF uniquement) :</label>
+                <input type="text" id="cv_url" name="cv_url" required>
+                
+                <label for="photo_profil_url">URL de la photo de profil (Image uniquement) :</label>
+                <input type="text" id="photo_profil_url" name="photo_profil_url" required>
                 
                 <label for="disponibilite">Disponibilité :</label>
                 <textarea id="disponibilite" name="disponibilite" rows="2" required></textarea>

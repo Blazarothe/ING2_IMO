@@ -7,6 +7,19 @@
 ?>
 <?php include_once "header.php"; ?>
 <body>
+<header>
+        <h1>Omnes Immobilier</h1>
+        <nav>
+            <ul>
+                <li><a href="../../rdv/index.php">Accueil</a></li>
+                <li><a href="../../rdv/tout_parcourir.php">Tout Parcourir</a></li>
+                <li><a href="../../rdv/rechercher.php">Recherche</a></li>
+                <li><a href="../../rdv/rendez_vous.php">Rendez-vous</a></li>
+                <li><a href="../../rdv/compte.php">Votre Compte</a></li>
+                <li><a href="../../rdv/chat.php">Chat</a></li>
+            </ul>
+        </nav>
+    </header>
   <div class="wrapper">
     <section class="users">
       <header>

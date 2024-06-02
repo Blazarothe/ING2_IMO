@@ -18,7 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $mot_de_passe = $_POST['mot_de_passe'];
     $telephone = $_POST['telephone'];
-    $cv = $_POST['cv'];
+    $cv_url = $_POST['cv_url'];
+    $photo_profil_url = $_POST['photo_profil_url'];
     $disponibilite = $_POST['disponibilite'];
 
     // Vérifier si l'email existe déjà dans la première base de données
@@ -33,17 +34,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: ajouter_agent.php");
         exit();
     } else {
+        // Hacher le mot de passe avant de l'insérer
+        $hashedPassword = $mot_de_passe;
         // Insérer l'utilisateur dans la table Utilisateurs
-        $hashedPassword = password_hash($mot_de_passe, PASSWORD_BCRYPT);
         $sql = "INSERT INTO Utilisateurs (nom, prenom, email, mot_de_passe, type_utilisateur) VALUES (?, ?, ?, ?, 'agent')";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ssss", $nom, $prenom, $email, $hashedPassword);
         if ($stmt->execute()) {
             $utilisateur_id = $stmt->insert_id;
             // Insérer l'agent dans la table Agents
-            $sql = "INSERT INTO Agents (utilisateur_id, telephone, cv, disponibilite) VALUES (?, ?, ?, ?)";
+            $sql = "INSERT INTO Agents (utilisateur_id, telephone, cv, disponibilite, photo_profil_url) VALUES (?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("isss", $utilisateur_id, $telephone, $cv, $disponibilite);
+            $stmt->bind_param("issss", $utilisateur_id, $telephone, $cv_url, $disponibilite, $photo_profil_url);
             if ($stmt->execute()) {
                 // Deuxième connexion à la base de données
                 $dbname2 = "reseau";
@@ -71,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $ran_id = rand(time(), 100000000);
                             $status = "Active now";
                             $role = '2';
+                            // Hacher le mot de passe avant de l'insérer dans la deuxième base de données
                             $encrypt_pass = md5($password2);
                             $insert_query = mysqli_query($conn2, "INSERT INTO users (unique_id, fname, lname, email, password, status, role) VALUES ({$ran_id}, '{$fname}', '{$lname}', '{$email2}', '{$encrypt_pass}', '{$status}', '{$role}')");
                             if ($insert_query) {
@@ -110,3 +113,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $conn->close();
 ?>
+
