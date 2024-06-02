@@ -304,7 +304,7 @@ $conn->close();
         <div class="admin-actions">
             <a href="ajouter_propriete.php">Ajouter une propriété</a>
             <a href="ajouter_agent.php">Ajouter un agent</a>
-            <a href="gerer_disponibilite.php">Gérer la disponibilité des agents</a>
+            <a href="agent_list.php">Gérer la disponibilité des agents</a>
         </div>
         <?php endif; ?>
 

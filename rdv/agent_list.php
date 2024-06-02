@@ -19,7 +19,7 @@ $result = $conn->query($sql);
 <body>
     <header>
         <div class="logo">
-            <img src="logo.png" alt="Logo">
+            <img src="logoomnes.webp" alt="Logo">
         </div>
         <nav>
             <ul>
